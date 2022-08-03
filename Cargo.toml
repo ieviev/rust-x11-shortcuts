@@ -1,0 +1,27 @@
+[package]
+name = "rustx11shortcuts"
+version = "1.0.0"
+edition = "2021"
+
+[lib]
+name = "rustx11shortcuts"
+path = "./src/lib.rs"
+
+
+[dependencies]
+fnv = "1.0"
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = "1.0.120"
+
+
+[dependencies.x11]
+version = "2.18.1"
+features = ["xlib"]
+
+[[example]]
+name = "simple"
+path = "./examples/simple.rs"
+
+[[example]]
+name = "applications"
+path = "./examples/applications.rs"
