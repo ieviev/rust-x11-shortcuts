@@ -1,0 +1,101 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'rustx11shortcuts'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=rustx11shortcuts"
+                ],
+                "filter": {
+                    "name": "rustx11shortcuts",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'simple'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=simple",
+                    "--package=rustx11shortcuts"
+                ],
+                "filter": {
+                    "name": "simple",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'simple'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=simple",
+                    "--package=rustx11shortcuts"
+                ],
+                "filter": {
+                    "name": "simple",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'applications'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=applications",
+                    "--package=rustx11shortcuts"
+                ],
+                "filter": {
+                    "name": "applications",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'applications'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=applications",
+                    "--package=rustx11shortcuts"
+                ],
+                "filter": {
+                    "name": "applications",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

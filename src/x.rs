@@ -10,7 +10,7 @@ use x11::xlib_xcb::XGetXCBConnection;
 use crate::KeyPress;
 
 pub mod atom {
-    pub const NET_ACTIVE_WINDOW: u64 = 335;
+    // pub const NET_ACTIVE_WINDOW: u64 = 335;
 }
 
 pub unsafe fn grab_all_keys(display: *mut xlib::Display, root: xlib::Window) -> c_int {
@@ -107,7 +107,7 @@ pub fn send_key_event(
     }
 }
 
-pub fn get_active_window_id(display: *mut xlib::Display, root_window: c_ulong) -> Option<u64> {
+pub fn get_active_window_id(display: *mut xlib::Display, atom_active_window:u64, root_window: c_ulong) -> Option<u64> {
     unsafe {
         let mut actual_type_return: u64 = 0;
         let mut actual_format_return: i32 = 0;
@@ -118,7 +118,7 @@ pub fn get_active_window_id(display: *mut xlib::Display, root_window: c_ulong) -
         let r = xlib::XGetWindowProperty(
             display,
             root_window as u64,
-            atom::NET_ACTIVE_WINDOW,
+            atom_active_window,
             0,
             i64::MAX,
             0,
@@ -264,4 +264,8 @@ pub unsafe fn get_parent(display: *mut xlib::Display, window: Window) -> Option<
     } else {
         None
     }
+}
+
+pub(crate) fn get_atom(display: *mut xlib::_XDisplay, as_ptr: *const i8) -> u64 {
+    unsafe { xlib::XInternAtom(display, as_ptr, 0) }
 }

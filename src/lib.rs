@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 extern crate x11;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_uint};
 use std::process::Command;
-use serde::{Deserialize, Serialize};
 use x11::xlib::{self, Window};
 pub mod types;
 use crate::types::*;
@@ -83,6 +83,7 @@ pub struct Remap {
     active_bindings: HashMap<KeyPress, Callback>,
     active_win: u64,
     active_wm_class: String,
+    atom_active_window: u64,
 }
 
 impl Remap {
@@ -91,14 +92,17 @@ impl Remap {
             let display = x::get_default_display();
             let root = x::get_root(display);
             xlib::XSelectInput(display, root, xlib::PropertyChangeMask);
+            let atom_net_active_window_str = CString::new("_NET_ACTIVE_WINDOW").unwrap();
+            let atom_active_window = x::get_atom(display, atom_net_active_window_str.as_ptr());
             Remap {
-                display: display,
-                root: root,
+                display,
+                root,
                 always_ignore: 0,
                 active_win: 0,
                 application_bindings: HashMap::new(),
                 active_wm_class: String::new(),
                 active_bindings: HashMap::new(),
+                atom_active_window,
             }
         }
     }
@@ -113,7 +117,12 @@ impl Remap {
             for i in 0..total_combinations(ignore_indexes.len()) {
                 let combination = map_indexes_combination(&ignore_indexes, i as u32);
                 unsafe {
-                    x::grab_with_mask(self.display, self.root, binding.key, binding.mask | combination);
+                    x::grab_with_mask(
+                        self.display,
+                        self.root,
+                        binding.key,
+                        binding.mask | combination,
+                    );
                 }
             }
         }
@@ -154,9 +163,15 @@ impl Remap {
                 }
                 xlib::PropertyNotify => {
                     let pe = xlib::XPropertyEvent::from(event);
+                    // dbg!(pe);
                     match pe.atom {
-                        x::atom::NET_ACTIVE_WINDOW => {
-                            x::get_active_window_id(self.display, pe.window).map(|win| {
+                        _ if pe.atom == self.atom_active_window => {
+                            x::get_active_window_id(
+                                self.display,
+                                self.atom_active_window,
+                                pe.window,
+                            )
+                            .map(|win| {
                                 self.on_window_change(win);
                             });
                         }
@@ -166,6 +181,7 @@ impl Remap {
                 }
                 _ => None,
             };
+            // dbg!(event_type);
             match callback {
                 None => pass_through(self.display, &mut event),
                 Some(f) => {

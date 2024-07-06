@@ -1,6 +1,5 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
-#![feature(trait_alias)]
 use crate::types::*;
 use rustx11shortcuts::*;
 use std::{
